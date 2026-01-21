@@ -1,32 +1,247 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="stylesheet" href="styles.css" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>PakePlus App</title>
-        <script type="module" src="/main.js" defer></script>
-    </head>
 
-    <body>
-        <main class="container">
-            <h1>Welcome to PakePlus</h1>
-            <form class="row" id="greet-form">
-                <input id="inputValue" placeholder="Enter a something..." />
-            </form>
-            <div class="resultBox">
-                <span>result: </span>
-                <span id="result"></span>
-            </div>
-            <div class="invokeBox">
-                <button id="openUrl">open_url_browser</button>
-                <button id="openUrlNew">open_url_new</button>
-                <button id="runCommand">run_command</button>
-                <button id="downloadFile">download_file</button>
-                <button id="getExeDir">get_exe_dir</button>
-                <button id="getEnvVar">get_env_var</button>
-                <button id="findPort">find_port</button>
-            </div>
-        </main>
-    </body>
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f172a" id="theme-color-meta" />
+    <title>欧亚学生成长助手</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              glass: {
+                100: 'rgba(255, 255, 255, 0.1)',
+                200: 'rgba(255, 255, 255, 0.2)',
+                300: 'rgba(255, 255, 255, 0.3)',
+                border: 'rgba(255, 255, 255, 0.15)',
+              }
+            },
+            animation: {
+              'blob': 'blob 25s infinite', // Slowed down from 7s to 25s for elegance
+            },
+            keyframes: {
+              blob: {
+                '0%': { transform: 'translate3d(0px, 0px, 0px) scale(1)' },
+                '33%': { transform: 'translate3d(30px, -50px, 0px) scale(1.1)' },
+                '66%': { transform: 'translate3d(-20px, 20px, 0px) scale(0.9)' },
+                '100%': { transform: 'translate3d(0px, 0px, 0px) scale(1)' },
+              }
+            }
+          }
+        },
+        plugins: [
+          function({ addUtilities }) {
+            addUtilities({
+              '.will-change-transform': {
+                'will-change': 'transform',
+              }
+            })
+          }
+        ]
+      }
+    </script>
+    <style>
+      /* Safe Area Utilities */
+      .pt-safe { padding-top: env(safe-area-inset-top); }
+      .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+      .pl-safe { padding-left: env(safe-area-inset-left); }
+      .pr-safe { padding-right: env(safe-area-inset-right); }
+
+      /* Custom scrollbar for webkit */
+      ::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.5); /* Slate 400 */
+        border-radius: 4px;
+      }
+      .dark ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(100, 116, 139, 0.8);
+      }
+      .dark ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.4);
+      }
+      .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .hide-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      
+      /* GLOBAL THEME BASE */
+      body {
+        background-color: #f8fafc; /* Slate 50 */
+        color: #0f172a; /* Slate 900 */
+        transition: background-color 0.5s ease, color 0.5s ease;
+      }
+      
+      .dark body {
+        background-color: #0f172a; /* Deep Slate (Dark Mode Base) */
+        color: #ffffff;
+      }
+
+      /* --- AUTOMATIC LIGHT MODE MAPPING (High Contrast Fix) --- */
+      /* Note: We use :not(.text-always-white) to protect specific dark-themed components */
+
+      /* 1. Invert Text Colors - Made Darker for better contrast against glass */
+      html:not(.dark) .text-white:not(.text-always-white) { color: #0f172a !important; } 
+      html:not(.dark) .text-white\/90:not(.text-always-white) { color: rgba(15, 23, 42, 0.95) !important; }
+      html:not(.dark) .text-white\/80:not(.text-always-white) { color: rgba(15, 23, 42, 0.85) !important; }
+      html:not(.dark) .text-white\/70:not(.text-always-white) { color: rgba(15, 23, 42, 0.75) !important; }
+      html:not(.dark) .text-white\/60:not(.text-always-white) { color: rgba(15, 23, 42, 0.7) !important; }
+      html:not(.dark) .text-white\/50:not(.text-always-white) { color: rgba(15, 23, 42, 0.6) !important; }
+      html:not(.dark) .text-white\/40:not(.text-always-white) { color: rgba(15, 23, 42, 0.5) !important; }
+      html:not(.dark) .text-white\/30:not(.text-always-white) { color: rgba(15, 23, 42, 0.3) !important; }
+      html:not(.dark) .text-white\/20:not(.text-always-white) { color: rgba(15, 23, 42, 0.2) !important; }
+      
+      /* Force White Utility for Dark Components in Light Mode (Like Onboarding) */
+      .text-always-white { color: #ffffff !important; }
+      .text-always-white\/50 { color: rgba(255, 255, 255, 0.5) !important; }
+      .text-always-white\/70 { color: rgba(255, 255, 255, 0.7) !important; }
+      .text-always-white\/80 { color: rgba(255, 255, 255, 0.8) !important; }
+
+      html:not(.dark) .text-gray-100:not(.text-always-white) { color: #1e293b !important; }
+      html:not(.dark) .text-gray-300:not(.text-always-white) { color: #334155 !important; }
+      html:not(.dark) .text-gray-400:not(.text-always-white) { color: #64748b !important; }
+
+      /* 2. Invert Background Opacities (White/10 -> Black/5) */
+      /* Protected elements with bg-white/xx will need specific overrides if needed, but usually bg implies surface */
+      html:not(.dark) .bg-white\/5 { background-color: rgba(0, 0, 0, 0.04) !important; }
+      html:not(.dark) .bg-white\/10 { background-color: rgba(0, 0, 0, 0.06) !important; }
+      html:not(.dark) .bg-white\/20 { background-color: rgba(0, 0, 0, 0.1) !important; }
+      html:not(.dark) .bg-white\/50 { background-color: rgba(255, 255, 255, 0.7) !important; } /* Make glass more opaque in light mode */
+
+      /* 3. Invert Borders - Subtle dark borders for definition */
+      html:not(.dark) .border-white\/5 { border-color: rgba(0, 0, 0, 0.05) !important; }
+      html:not(.dark) .border-white\/10 { border-color: rgba(0, 0, 0, 0.1) !important; }
+      html:not(.dark) .border-white\/20 { border-color: rgba(0, 0, 0, 0.15) !important; }
+
+      /* 4. Disable Text Glow in Light Mode */
+      html:not(.dark) .text-glow { text-shadow: none !important; }
+
+      /* --- GLASS COMPONENTS ADAPTATION (Reduced Opacity) --- */
+
+      /* Panel: Sidebar / Large Containers */
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.75); /* Crystal clear high opacity */
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid rgba(255, 255, 255, 0.8); /* Crisp white border */
+        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+      }
+
+      .dark .glass-panel {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+      }
+      
+      /* Card: Functional Items */
+      .glass-card {
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .glass-card:active {
+         transform: scale(0.98);
+      }
+
+      .dark .glass-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      }
+      
+      .dark .glass-card:active {
+         background: rgba(255, 255, 255, 0.08);
+      }
+
+      /* Inputs */
+      .glass-input {
+        background: rgba(255, 255, 255, 0.6);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        color: #0f172a;
+      }
+      .glass-input:focus {
+        border-color: rgba(79, 70, 229, 0.5);
+        background: rgba(255, 255, 255, 0.9);
+      }
+
+      .dark .glass-input {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+      .dark .glass-input:focus {
+        border-color: rgba(129, 140, 248, 0.5);
+        background: rgba(0, 0, 0, 0.3);
+      }
+
+      /* Hardware Acceleration Class */
+      .gpu-accel {
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
+        perspective: 1000px;
+      }
+
+      /* Tap highlight removal for mobile */
+      * {
+        -webkit-tap-highlight-color: transparent;
+      }
+    </style>
+
+<link rel="stylesheet" href="/index.css">
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "qrcode": "https://esm.sh/qrcode@1.5.3",
+    "jsqr": "https://esm.sh/jsqr@1.4.0",
+    "crypto-js": "https://esm.sh/crypto-js@4.2.0",
+    "react-dom": "https://esm.sh/react-dom@^19.2.3"
+  }
+}
+</script>
+  <script type="module" crossorigin src="/assets/index-BDj9p9M6.js"></script>
+</head>
+  <body class="antialiased overflow-hidden fixed inset-0">
+    <div id="root" class="h-full w-full overflow-hidden"></div>
+    <script>
+        // Dynamic Meta Theme Color Update
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.attributeName === "class") {
+                    const isDark = document.documentElement.classList.contains('dark');
+                    document.getElementById('theme-color-meta').setAttribute('content', isDark ? '#0f172a' : '#f8fafc');
+                }
+            });
+        });
+        observer.observe(document.documentElement, { attributes: true });
+    </script>
+</body>
 </html>
