@@ -51,6 +51,49 @@
       .pl-safe { padding-left: env(safe-area-inset-left); }
       .pr-safe { padding-right: env(safe-area-inset-right); }
 
+      /* --- GLOBAL ANIMATIONS & TRANSITIONS --- */
+      
+      /* Staggered Entrance for Lists */
+      .stagger-enter > * {
+        opacity: 0;
+        animation: staggerFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      
+      /* Create delay loops for up to 10 items */
+      .stagger-enter > *:nth-child(1) { animation-delay: 0.05s; }
+      .stagger-enter > *:nth-child(2) { animation-delay: 0.1s; }
+      .stagger-enter > *:nth-child(3) { animation-delay: 0.15s; }
+      .stagger-enter > *:nth-child(4) { animation-delay: 0.2s; }
+      .stagger-enter > *:nth-child(5) { animation-delay: 0.25s; }
+      .stagger-enter > *:nth-child(6) { animation-delay: 0.3s; }
+      .stagger-enter > *:nth-child(7) { animation-delay: 0.35s; }
+      .stagger-enter > *:nth-child(8) { animation-delay: 0.4s; }
+      .stagger-enter > *:nth-child(9) { animation-delay: 0.45s; }
+      .stagger-enter > *:nth-child(10) { animation-delay: 0.5s; }
+
+      @keyframes staggerFadeUp {
+        from { opacity: 0; transform: translate3d(0, 15px, 0); }
+        to { opacity: 1; transform: translate3d(0, 0, 0); }
+      }
+
+      /* Native-like Page Transitions */
+      .page-enter-active {
+        animation: pageSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      .page-exit-active {
+        animation: pageScaleFadeOut 0.3s ease-in forwards;
+      }
+
+      @keyframes pageSlideIn {
+        from { opacity: 0; transform: translate3d(0, 20px, 0) scale(0.98); }
+        to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+      }
+
+      @keyframes pageScaleFadeOut {
+        from { opacity: 1; transform: scale(1); }
+        to { opacity: 0; transform: scale(0.98); }
+      }
+
       /* Custom scrollbar for webkit */
       ::-webkit-scrollbar {
         width: 4px;
@@ -86,6 +129,7 @@
         background-color: #f8fafc; /* Slate 50 */
         color: #0f172a; /* Slate 900 */
         transition: background-color 0.5s ease, color 0.5s ease;
+        overscroll-behavior-y: none; /* Prevent native pull-to-refresh/rubber-banding */
       }
       
       .dark body {
@@ -227,21 +271,9 @@
   }
 }
 </script>
-  <script type="module" crossorigin src="/assets/index-BDj9p9M6.js"></script>
+  <script type="module" crossorigin src="/assets/index-L8c2kVrv.js"></script>
 </head>
   <body class="antialiased overflow-hidden fixed inset-0">
     <div id="root" class="h-full w-full overflow-hidden"></div>
-    <script>
-        // Dynamic Meta Theme Color Update
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.attributeName === "class") {
-                    const isDark = document.documentElement.classList.contains('dark');
-                    document.getElementById('theme-color-meta').setAttribute('content', isDark ? '#0f172a' : '#f8fafc');
-                }
-            });
-        });
-        observer.observe(document.documentElement, { attributes: true });
-    </script>
 </body>
 </html>
